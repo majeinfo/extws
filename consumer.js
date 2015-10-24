@@ -5,23 +5,32 @@
 var config = require('./config/local.js');
 var schema = require('./modules/schema.js');
  
+var lock = false;
+
 /** 
  * Get older sensorevent
  */
 function handleOneSensorEvent()
 {
+	if (lock) return;
+	lock = true;
+
 	schema.SensorEvent.findOneAndRemove({}, { sort: { 'updated': 1 }}, function(err, event) {
 		if (err) {
 			console.log(err);
+			lock = false;
 			return;
 		}
-		if (!event) return;
-
+		if (!event) {
+			lock = false;
+			return;
+		}
 		console.log(event);
 
 		// Sanity checks
 		if (!event.zid || !event.key || !event.data || !event.updated) {
 			console.log('Incomplete sensorevent: skipped');
+			lock = false;
 			return;
 		}
 
@@ -51,14 +60,17 @@ function handleOneSensorEvent()
 					change: change
 				}
 			});
-			sensor.save(function(err) {
+
+			// Find the current value and update if exists or insert otherwise
+			schema.Sensor.findOneAndUpdate({ key: sensor.key, sid: sensor.sid }, sensor, { upsert: true, new: true }, function(err) {
 				if (err) console.log(err);
 			});
 		}
-		handleOneSensorEvent();	// TODO: make blocking read
+
+		lock = false;
 	});
 }
 
-handleOneSensorEvent();
+setInterval(handleOneSensorEvent, 10000);
 
 // EOF
