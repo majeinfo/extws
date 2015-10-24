@@ -30,14 +30,15 @@ function checkClient(req, res, next) {
 		return;
 	}
 	
-	schema.User.find({ key: req.body.key }, function(err, user) {
-		if (err) {
-			console.log('checkClient: mongo error finding key: ', req.body.key);
+	schema.User.findOne({ key: req.body.key }, function(err, user) {
+		if (err || !user) {
+			console.log('checkClient: mongo error finding key:', req.body.key);
 			res.json({ status: 'ok' });
 			return;
 		}
+		console.log(user);
 		if (!user.controllers || user.controllers.indexOf(req.body.zid) == -1) {
-			console.log('checkClient: zid ', req.body.zid, ' not associated with key ', req.body.key);
+			console.log('checkClient: zid', req.body.zid, ' not associated with key', req.body.key);
 			res.json({ status: 'ok' });
 			return;
 		}
@@ -58,7 +59,10 @@ router.post('/devices', statusOK, checkClient, function(req, res, next) {
 		key: req.body.key
 	});
 	event.save(function(err) {
-		if (err) console.log(err);
+		if (err) { 
+			console.log(err); 
+			return; 
+		}
 	});
 	res.json({ status: 'ok' });
 });

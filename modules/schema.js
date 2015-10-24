@@ -8,6 +8,7 @@ var config = require('../config/local.js');
 
 // Connect to MongoDB
 mongoose.connect('mongodb://' + config.mongoUser + ':' + config.mongoPassword + '@' + config.mongoSrv + '/' + config.mongoDB);
+mongoose.set('debug', true);
 
 // TODO: Must reconnect in case of error
 var db = mongoose.connection;
@@ -18,11 +19,32 @@ db.once('open', function (callback) {
 
 // Event about sensor
 var sensorEventSchema = new Schema({
+	key: String,
 	zid: String,
 	updated: { type: Date, default: Date.now },
 	data: Schema.Types.Mixed
-});
+}, { versionKey: false });
 var SensorEvent = mongoose.model('SensorEvent', sensorEventSchema);
+
+// Sensors
+var sensorSchema = new Schema({
+	key: String,
+	zid: String,
+	sid: String,
+	description: String,
+	devtype: String,
+	tags: Array,
+	metrics: {
+		probeTitle: String,
+		scaleTitle: String,
+		is_level_number: Boolean,  // level or on_off ?
+		level: Number,
+		on_off: Boolean,
+		change: String 
+	},
+	last_update: Date
+}, { versionKey: false });
+var Sensor = mongoose.model('Sensor', sensorSchema);
 
 // User with a paying account
 var userSchema = new Schema({
@@ -32,7 +54,7 @@ var userSchema = new Schema({
 	key: String,
 	controllers: [String]	// array of zid
 	// TODO: infos de payment, abonnement, adresse, etc...
-});
+}, { versionKey: false });
 var User = mongoose.model('User', userSchema);
 
 // R-Pi definition
@@ -42,15 +64,8 @@ var controllerSchema = new Schema({
 });
 var Controller = mongoose.model('Controller', controllerSchema);
 
-/*
-var fluffy = new Kitten({ name: 'fluffy' });
-fluffy.save(function (err, fluffy) {
-  if (err) return console.error(err);
-  fluffy.speak();
-});
-*/
-
 module.exports.SensorEvent = SensorEvent;
+module.exports.Sensor = Sensor;
 module.exports.User = User;
 module.exports.Controller = Controller;
 
