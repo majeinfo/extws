@@ -46,6 +46,16 @@ var sensorSchema = new Schema({
 }, { versionKey: false });
 var Sensor = mongoose.model('Sensor', sensorSchema);
 
+// Command back to Controller
+var commandSchema = new Schema({
+	key: String,
+	zid: String,
+	sid: String,
+	cmd: String,	// JSON format
+	create_time: Date
+}, { versionKey: false });
+var Command = mongoose.model('Command', commandSchema);
+
 // User with a paying account
 var userSchema = new Schema({
 	login: String,
@@ -68,5 +78,6 @@ module.exports.SensorEvent = SensorEvent;
 module.exports.Sensor = Sensor;
 module.exports.User = User;
 module.exports.Controller = Controller;
+module.exports.Command = Command;
 
 // EOF

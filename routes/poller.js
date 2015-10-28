@@ -59,12 +59,36 @@ router.post('/devices', statusOK, checkClient, function(req, res, next) {
 		key: req.body.key
 	});
 	event.save(function(err) {
+		var resp = { status: 'ok' };
 		if (err) { 
 			console.log(err); 
-			return; 
+			res.json(resp);
+			return;
 		}
+
+		// Check if Commands must be returned back
+		// TODO: always returns the latest Command only ?
+		schema.Command.find({ key: req.body.key, zid: req.body.zid }, { _id: 0 }, { sort: { create_time: -1 }}, function(err, cmds) {
+			if (err) { 
+				console.log(err); 
+				res.json(resp);
+				return;
+			}
+			console.log('found commands:', cmds);
+			resp['cmd'] = new Array();
+			for (i in cmds) {
+				resp['cmd'][i] = cmds[i];
+			}
+			res.json(resp);
+
+			// Delete Commands (not safe - should be made only if network was available ?)
+			schema.Command.remove({ key: req.body.key, zid: req.body.zid }, function(err) {
+				if (err) { console.log(err); return; }
+				console.log('Commands removed');
+			});
+		});
 	});
-	res.json({ status: 'ok' });
+	//res.json({ status: 'ok' });
 });
 
 module.exports = router;

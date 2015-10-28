@@ -41,9 +41,9 @@ function handleOneSensorEvent()
 
 			var is_level_number = (data[i].metrics.level != 'on' && data[i].metrics.level != 'off');
 			var level = (is_level_number) ? data[i].metrics.level : 0;
-			var on_off = (data[i].metrics.on_off == 'on');
+			var on_off = (data[i].metrics.level == 'on');
 			var change = data[i].metrics.change;
-			var sensor = new schema.Sensor({
+			var sensor = {
 				key: event.key,
 				zid: event.zid,
 				sid: data[i].id,
@@ -59,7 +59,7 @@ function handleOneSensorEvent()
 					on_off: on_off,
 					change: change
 				}
-			});
+			};
 
 			// Find the current value and update if exists or insert otherwise
 			schema.Sensor.findOneAndUpdate({ key: sensor.key, sid: sensor.sid }, sensor, { upsert: true, new: true }, function(err) {
@@ -71,6 +71,6 @@ function handleOneSensorEvent()
 	});
 }
 
-setInterval(handleOneSensorEvent, 10000);
+setInterval(handleOneSensorEvent, 3000);
 
 // EOF
