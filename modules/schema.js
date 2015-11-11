@@ -17,6 +17,15 @@ db.once('open', function (callback) {
 	console.log('MongoDB Connection OK !');
 });
 
+// Saved Configuration
+var configSchema = new Schema({
+	key: String,
+	zid: String,
+	updated: { type: Date, default: Date.now },
+	config: Schema.Types.Mixed
+}, { versionKey: false });
+var Config = mongoose.model('Config', configSchema);
+
 // Event about sensor
 var sensorEventSchema = new Schema({
 	key: String,
@@ -83,5 +92,6 @@ module.exports.Sensor = Sensor;
 module.exports.User = User;
 module.exports.Controller = Controller;
 module.exports.Command = Command;
+module.exports.Config = Config;
 
 // EOF

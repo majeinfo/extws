@@ -91,4 +91,23 @@ router.post('/devices', statusOK, checkClient, function(req, res, next) {
 	//res.json({ status: 'ok' });
 });
 
+/**
+ * Receive a Configuration to save
+ */
+router.post('/saveconf', checkClient, function(req, res, next) {
+	var config = new schema.Config({
+		zid: req.body.zid,
+		config: req.body.config,
+		updated: req.body.updated,
+		key: req.body.key
+	});
+	config.save(function(err) {
+		var resp = { status: 'ok' };
+		if (err) {
+			console.log(err);
+		}
+		res.json(resp);
+	});
+});
+
 module.exports = router;
