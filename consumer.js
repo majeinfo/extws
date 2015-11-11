@@ -37,7 +37,10 @@ function handleOneSensorEvent()
 		for (i in event.data) {
 			// Sanity checks
 			var data = event.data;
-			if (!data[i].id) continue;
+			if (!data[i].devid || !data[i].instid || !data[i].sid) {
+				console.log('Missing devid or instid or sid in event');
+				continue;
+			}
 
 			var is_level_number = (data[i].metrics.level != 'on' && data[i].metrics.level != 'off');
 			var level = (is_level_number) ? data[i].metrics.level : 0;
@@ -46,7 +49,9 @@ function handleOneSensorEvent()
 			var sensor = {
 				key: event.key,
 				zid: event.zid,
-				sid: data[i].id,
+				devid: data[i].devid,
+				instid: data[i].instid,
+				sid: data[i].sid,
 				last_update: event.updated,
 				description: data[i].metrics.title,
 				devtype: data[i].deviceType,
@@ -62,7 +67,7 @@ function handleOneSensorEvent()
 			};
 
 			// Find the current value and update if exists or insert otherwise
-			schema.Sensor.findOneAndUpdate({ key: sensor.key, sid: sensor.sid }, sensor, { upsert: true, new: true }, function(err) {
+			schema.Sensor.findOneAndUpdate({ key: sensor.key, devid: sensor.devid, instid: sensor.instid, sid: sensor.sid }, sensor, { upsert: true, new: true }, function(err) {
 				if (err) console.log(err);
 			});
 		}

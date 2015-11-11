@@ -30,6 +30,8 @@ var SensorEvent = mongoose.model('SensorEvent', sensorEventSchema);
 var sensorSchema = new Schema({
 	key: String,
 	zid: String,
+	devid: String,
+	instid: String,
 	sid: String,
 	description: String,
 	devtype: String,
@@ -50,6 +52,8 @@ var Sensor = mongoose.model('Sensor', sensorSchema);
 var commandSchema = new Schema({
 	key: String,
 	zid: String,
+	devid: String,
+	instid: String,
 	sid: String,
 	cmd: String,	// JSON format
 	create_time: Date
