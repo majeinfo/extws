@@ -57,6 +57,28 @@ var sensorSchema = new Schema({
 }, { versionKey: false });
 var Sensor = mongoose.model('Sensor', sensorSchema);
 
+// History
+var historySchema = new Schema({
+	key: String,
+	zid: String,
+	devid: String,
+	instid: String,
+	sid: String,
+	description: String,
+	devtype: String,
+	tags: Array,
+	metrics: {
+		probeTitle: String,
+		scaleTitle: String,
+		is_level_number: Boolean,  // level or on_off ?
+		level: Number,
+		on_off: Boolean,
+		change: String 
+	},
+	last_update: Date
+}, { versionKey: false });
+var History = mongoose.model('History', historySchema);
+
 // Command back to Controller
 var commandSchema = new Schema({
 	key: String,
@@ -93,5 +115,6 @@ module.exports.User = User;
 module.exports.Controller = Controller;
 module.exports.Command = Command;
 module.exports.Config = Config;
+module.exports.History = History;
 
 // EOF

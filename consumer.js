@@ -1,5 +1,7 @@
 // ----------------------------------------------------
 // CONSUMER THAT READS SENSOREVENT TO POPULATE SENSORS
+//
+// TODO: should be rewritten to be asynchronous
 // ----------------------------------------------------
 //
 var config = require('./config/local.js');
@@ -70,12 +72,16 @@ function handleOneSensorEvent()
 			schema.Sensor.findOneAndUpdate({ key: sensor.key, devid: sensor.devid, instid: sensor.instid, sid: sensor.sid }, sensor, { upsert: true, new: true }, function(err) {
 				if (err) console.log(err);
 			});
+
+			// Also historize the Event
+			// TODO: don't store if previous value is identical
+			new schema.History(sensor).save();
 		}
 
 		lock = false;
 	});
 }
 
-setInterval(handleOneSensorEvent, 3000);
+setInterval(handleOneSensorEvent, 1000);
 
 // EOF
