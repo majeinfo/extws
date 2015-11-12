@@ -1,6 +1,10 @@
+// ------------------------------------------------------------
+// REQUEST Management
+// ------------------------------------------------------------
 var express = require('express');
 var router = express.Router();
 var schema = require('../modules/schema.js');
+var logger = require('../modules/logger.js');
 
 /**
  * Middleware that check the 'ok' status from POST request
@@ -11,7 +15,7 @@ function statusOK(req, res, next) {
 		return;
 	}
 
-	console.log('statusOK: bad status: ', req.body.status);
+	logger.error('statusOK: bad status: ', req.body.status);
 	res.json({ status: 'ok' });
 }
 
@@ -20,25 +24,25 @@ function statusOK(req, res, next) {
  */
 function checkClient(req, res, next) {
 	if (!req.body.key) {
-		console.log('checkClient: missing key');
+		logger.error('checkClient: missing key');
 		res.json({ status: 'ok' });
 		return;
 	}
 	if (!req.body.zid) {
-		console.log('checkClient: missing zid');
+		logger.error('checkClient: missing zid');
 		res.json({ status: 'ok' });
 		return;
 	}
 	
 	schema.User.findOne({ key: req.body.key }, function(err, user) {
 		if (err || !user) {
-			console.log('checkClient: mongo error finding key:', req.body.key);
+			logger.error('checkClient: mongo error finding key:', req.body.key);
 			res.json({ status: 'ok' });
 			return;
 		}
-		console.log(user);
+		logger.debug(user);
 		if (!user.controllers || user.controllers.indexOf(req.body.zid) == -1) {
-			console.log('checkClient: zid', req.body.zid, ' not associated with key', req.body.key);
+			logger.error('checkClient: zid', req.body.zid, ' not associated with key', req.body.key);
 			res.json({ status: 'ok' });
 			return;
 		}
@@ -50,7 +54,7 @@ function checkClient(req, res, next) {
  * Receive the POST with the device list
  */
 router.post('/devices', statusOK, checkClient, function(req, res, next) {
-	console.log(req.body);
+	logger.debug(req.body);
 	if (!req.body.updated) req.body.updated = Date.now();
 	var event = new schema.SensorEvent({
 		zid: req.body.zid,
@@ -61,7 +65,7 @@ router.post('/devices', statusOK, checkClient, function(req, res, next) {
 	event.save(function(err) {
 		var resp = { status: 'ok' };
 		if (err) { 
-			console.log(err); 
+			logger.error(err); 
 			res.json(resp);
 			return;
 		}
@@ -70,11 +74,11 @@ router.post('/devices', statusOK, checkClient, function(req, res, next) {
 		// TODO: always returns the latest Command only ?
 		schema.Command.find({ key: req.body.key, zid: req.body.zid }, { _id: 0 }, { sort: { create_time: -1 }}, function(err, cmds) {
 			if (err) { 
-				console.log(err); 
+				logger.error(err); 
 				res.json(resp);
 				return;
 			}
-			console.log('found commands:', cmds);
+			logger.debug('found commands:', cmds);
 			resp['cmd'] = new Array();
 			for (i in cmds) {
 				resp['cmd'][i] = cmds[i];
@@ -83,8 +87,8 @@ router.post('/devices', statusOK, checkClient, function(req, res, next) {
 
 			// Delete Commands (not safe - should be made only if network was available ?)
 			schema.Command.remove({ key: req.body.key, zid: req.body.zid }, function(err) {
-				if (err) { console.log(err); return; }
-				console.log('Commands removed');
+				if (err) { logger.error(err); return; }
+				logger.debug('Commands removed');
 			});
 		});
 	});
@@ -104,7 +108,7 @@ router.post('/saveconf', checkClient, function(req, res, next) {
 	config.save(function(err) {
 		var resp = { status: 'ok' };
 		if (err) {
-			console.log(err);
+			logger.error(err);
 		}
 		res.json(resp);
 	});

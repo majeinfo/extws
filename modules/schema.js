@@ -1,21 +1,41 @@
-// ---------------------------------------------
+// --------------------------------------------------------------------
 // MongoDB Schema
-// ---------------------------------------------
+//
+// Set environment variable LEVEL to 'debug' to debug mongoose
+// --------------------------------------------------------------------
 //
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var config = require('../config/local.js');
+var logger = require('../modules/logger.js');
 
 // Connect to MongoDB
-mongoose.connect('mongodb://' + config.mongoUser + ':' + config.mongoPassword + '@' + config.mongoSrv + '/' + config.mongoDB);
-mongoose.set('debug', true);
+var dbURI = 'mongodb://' + config.mongoUser + ':' + config.mongoPassword + '@' + config.mongoSrv + '/' + config.mongoDB;
+mongoose.set('debug', process.env.LEVEL);
 
-// TODO: Must reconnect in case of error
+function connectToMongo() {
+	mongoose.connect(dbURI, {server:{auto_reconnect:true}});
+}
+
 var db = mongoose.connection;
-db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-db.once('open', function (callback) {
-	console.log('MongoDB Connection OK !');
+db.on('error', function(err) {
+	logger.error('MongoDB connection error:', err);
+	mongoose.disconnect();
 });
+db.on('connected', function() {
+	logger.info('MongoDB connected!');
+});
+db.once('open', function (callback) {
+	logger.info('MongoDB Connection OK !');
+});
+db.on('reconnected', function () {
+	logger.info('MongoDB reconnected!');
+});
+db.on('disconnected', function() {
+	logger.error('MongoDB disconnected!');
+	setTimeout(connectToMongo, 5000);
+});
+connectToMongo();
 
 // Saved Configuration
 var configSchema = new Schema({

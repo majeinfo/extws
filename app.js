@@ -1,13 +1,20 @@
+// --------------------------------------------------------------------------
+// PROXY INTERFACE WITH POLLER
+// This is only a Web Service API - not HTML produced
+//
+// Set PORT environment variable to select the listening port (default: 3001)
+// Set LEVEL to select the default logging level
+// --------------------------------------------------------------------------
 var express = require('express'),
-    path = require('path');
-    logger = require('morgan');
-    cookieParser = require('cookie-parser');
+    path = require('path'),
+    morgan = require('morgan'),
+    cookieParser = require('cookie-parser'),
     bodyParser = require('body-parser'),
-    config = require('./config/local');
-
-var routes = require('./routes/index');
-var users = require('./routes/users');
-var poller = require('./routes/poller');
+    config = require('./config/local'),
+    logger = require('./modules/logger'),
+    routes = require('./routes/index'),
+    users = require('./routes/users'),
+    poller = require('./routes/poller');
 
 var app = express();
 
@@ -17,7 +24,8 @@ var app = express();
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
+app.use(morgan('dev'));
+//app.use(morgan('dev')({ "stream": logger.stream }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -60,3 +68,5 @@ app.use(function(err, req, res, next) {
 */
 
 module.exports = app;
+
+// EOF
