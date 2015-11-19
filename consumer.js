@@ -28,7 +28,7 @@ function handleOneSensorEvent()
 			lock = false;
 			return;
 		}
-		logger.debug(event);
+		//logger.debug(event);
 
 		// Sanity checks
 		if (!event.zid || !event.key || !event.data || !event.updated) {
@@ -45,10 +45,12 @@ function handleOneSensorEvent()
 				continue;
 			}
 
+			// TODO: à supprimer
 			var is_level_number = (data[i].metrics.level != 'on' && data[i].metrics.level != 'off');
 			var level = (is_level_number) ? data[i].metrics.level : 0;
 			var on_off = (data[i].metrics.level == 'on');
 			var change = data[i].metrics.change;
+
 			var sensor = {
 				key: event.key,
 				zid: event.zid,

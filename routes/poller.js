@@ -40,7 +40,7 @@ function checkClient(req, res, next) {
 			res.json({ status: 'ok' });
 			return;
 		}
-		logger.debug(user);
+		//logger.debug(user);
 		if (!user.controllers || user.controllers.indexOf(req.body.zid) == -1) {
 			logger.error('checkClient: zid', req.body.zid, ' not associated with key', req.body.key);
 			res.json({ status: 'ok' });

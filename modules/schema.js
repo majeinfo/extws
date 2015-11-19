@@ -4,10 +4,10 @@
 // Set environment variable LEVEL to 'debug' to debug mongoose
 // --------------------------------------------------------------------
 //
-var mongoose = require('mongoose');
+var mongoose = require('mongoose'),
+    config = require('../config/local.js'),
+    logger = require('../modules/logger.js');
 var Schema = mongoose.Schema;
-var config = require('../config/local.js');
-var logger = require('../modules/logger.js');
 
 // Connect to MongoDB
 var dbURI = 'mongodb://' + config.mongoUser + ':' + config.mongoPassword + '@' + config.mongoSrv + '/' + config.mongoDB;
