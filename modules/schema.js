@@ -103,10 +103,8 @@ var History = mongoose.model('History', historySchema);
 var commandSchema = new Schema({
 	key: String,
 	zid: String,
-	devid: String,
-	instid: String,
-	sid: String,
-	cmd: String,	// JSON format
+	cmd: String,
+	parms: String,	// JSON Format
 	create_time: Date
 }, { versionKey: false });
 var Command = mongoose.model('Command', commandSchema);

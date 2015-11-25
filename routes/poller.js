@@ -79,9 +79,9 @@ router.post('/devices', statusOK, checkClient, function(req, res, next) {
 				return;
 			}
 			logger.debug('found commands:', cmds);
-			resp['cmd'] = new Array();
+			resp['cmds'] = new Array();
 			for (i in cmds) {
-				resp['cmd'][i] = cmds[i];
+				resp['cmds'][i] = cmds[i];
 			}
 			res.json(resp);
 
