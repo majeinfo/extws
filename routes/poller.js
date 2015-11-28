@@ -53,11 +53,11 @@ function checkClient(req, res, next) {
 /** 
  * Receive the POST with the device list
  */
-router.post('/devices', statusOK, checkClient, function(req, res, next) {
-	logger.debug(req.body);
+router.post('/events', statusOK, checkClient, function(req, res, next) {
 	if (!req.body.updated) req.body.updated = Date.now();
-	var event = new schema.SensorEvent({
+	var event = new schema.Event({
 		zid: req.body.zid,
+		evttype: req.body.evttype,
 		data: req.body.data,
 		updated: req.body.updated,
 		key: req.body.key

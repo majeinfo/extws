@@ -47,13 +47,23 @@ var configSchema = new Schema({
 var Config = mongoose.model('Config', configSchema);
 
 // Event about sensor
-var sensorEventSchema = new Schema({
+var eventSchema = new Schema({
 	key: String,
 	zid: String,
+	evttype: String,
 	updated: { type: Date, default: Date.now },
 	data: Schema.Types.Mixed
 }, { versionKey: false });
-var SensorEvent = mongoose.model('SensorEvent', sensorEventSchema);
+var Event = mongoose.model('Event', eventSchema);
+
+// Logs
+var logSchema = new Schema({
+	key: String,
+	date : Date,
+	level: String,
+	msg: String
+}, { versionKey: false });
+var Log = mongoose.model('Log', logSchema);
 
 // Sensors
 var sensorSchema = new Schema({
@@ -123,16 +133,21 @@ var User = mongoose.model('User', userSchema);
 // R-Pi definition
 var controllerSchema = new Schema({
 	zid: String,
-	key: String	// owner
+	key: String,	// owner
+	doversion: { type: String, default: '' },
+	description: { type: String, default: '' },
+	login: { type: String, default: '' },
+	timezone: { type: String, default: '' }
 });
 var Controller = mongoose.model('Controller', controllerSchema);
 
-module.exports.SensorEvent = SensorEvent;
+module.exports.Event = Event;
 module.exports.Sensor = Sensor;
 module.exports.User = User;
 module.exports.Controller = Controller;
 module.exports.Command = Command;
 module.exports.Config = Config;
 module.exports.History = History;
+module.exports.Log = Log;
 
 // EOF
