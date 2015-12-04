@@ -114,4 +114,13 @@ router.post('/saveconf', checkClient, function(req, res, next) {
 	});
 });
 
+/**
+ * Receive an email demand notification
+ */
+router.post('/sendemail', checkClient, function(req, res, next) {
+	logger.debug('Email Notification !'); 
+	var resp = { status: 'ok' };
+	res.json(resp);
+});
+
 module.exports = router;
