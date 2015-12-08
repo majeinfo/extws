@@ -119,6 +119,14 @@ router.post('/saveconf', checkClient, function(req, res, next) {
  */
 router.post('/sendemail', checkClient, function(req, res, next) {
 	logger.debug('Email Notification !'); 
+	if (!req.body.updated) req.body.updated = Date.now();
+	var event = new schema.Event({
+		zid: req.body.zid,
+		evttype: req.body.evttype,
+		data: req.body.data,
+		updated: req.body.updated,
+		key: req.body.key
+	});
 	var resp = { status: 'ok' };
 	res.json(resp);
 });
