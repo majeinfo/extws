@@ -4,11 +4,26 @@
 // TODO: should be rewritten to be asynchronous
 // ----------------------------------------------------
 //
-var config = require('./config/local.js');
-var logger = require('./modules/logger.js');
-var schema = require('./modules/schema.js');
+var fs = require('fs'),
+    config = require('./config/local.js'),
+    logger = require('./modules/logger.js'),
+    schema = require('./modules/schema.js');
  
 var lock = false;
+
+// Load the Consumer Plugins
+var _consumerPlugins = {};
+var _plugFiles = fs.readdirSync('./plugins/consumers');
+logger.debug(_plugFiles);
+for (plug in _plugFiles) {
+        var parts = _plugFiles[plug].split('.');
+        if (parts.length != 2 || parts[1] != 'js') {
+                logger.info('Plugin name ' + _plugFiles[plug] + ' ignored');
+                continue;
+        }
+        plugname = parts[0];
+        _consumerPlugins[plugname] = require('./plugins/consumers/' + _plugFiles[plug]);
+}
 
 /** 
  * Get older sensorevent
@@ -31,12 +46,28 @@ function handleOneEvent()
 		logger.debug('handleOneEvent:', event.evttype);
 
 		// Sanity checks
-		if (!event.zid || !event.key || !event.data || !event.updated) {
+		if (!event.zid || !event.key || !event.data || !event.updated || !event.evttype) {
 			logger.error('Incomplete sensorevent: skipped');
 			lock = false;
 			return;
 		}
 
+                // Must find a Plugin with matching name:
+                logger.debug('Event Type: ' + event.evttype);
+                var found = false;
+                for (p in _consumerPlugins) {
+                        if (_consumerPlugins[p] == event.evttype) {
+                                found = true;
+				var res = _consumerPlugins[p].doConsume(event);
+                                break;
+                        }
+                }
+                if (!found) {
+                        logger.error('Event has unknown Type: ' + event.evttype);
+                        return;
+                }
+
+		/*
 		if (event.evttype == 'sensors') {
 			for (i in event.data) {
 				// Sanity checks
@@ -106,6 +137,7 @@ function handleOneEvent()
 				});
 			}
 		}
+		*/
 
 		lock = false;
 	});
