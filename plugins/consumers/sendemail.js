@@ -22,14 +22,14 @@ var transporter = mailer.createTransport(trans);
 module.exports.doConsume = function(event) {
         logger.debug('Consume Sendemail Events');
 
-	// TODO: check this Client doesn not spam the Earth
+	// TODO: check this Client does not spam the Earth
 	// TODO: normally, only valdated email address should be used - this must be checked
 
 	transporter.sendMail({
 		from: mailerconfig.from,
 		to: event.email,
 		subject: event.subject,
-		text: 'ah, ah....'
+		text: event.content
 	});
 
 	return true;

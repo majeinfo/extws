@@ -127,8 +127,13 @@ router.post('/sendemail', checkClient, function(req, res, next) {
 		updated: req.body.updated,
 		key: req.body.key
 	});
-	var resp = { status: 'ok' };
-	res.json(resp);
+	event.save(function(err) {
+		var resp = { status: 'ok' };
+		if (err) { 
+			logger.error(err); 
+		}
+		res.json(resp);
+	});
 });
 
 module.exports = router;
