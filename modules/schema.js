@@ -91,6 +91,12 @@ var Sensor = mongoose.model('Sensor', sensorSchema);
 var historySchema = new Schema({
 	key: String,
 	zid: String,
+	evttype: String,
+	updated: { type: Date, default: Date.now },
+	data: Schema.Types.Mixed
+/*
+	key: String,
+	zid: String,
 	devid: String,
 	instid: String,
 	sid: String,
@@ -106,6 +112,7 @@ var historySchema = new Schema({
 		change: String 
 	},
 	last_update: Date
+*/
 }, { versionKey: false });
 var History = mongoose.model('History', historySchema);
 

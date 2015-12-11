@@ -42,8 +42,14 @@ module.exports.doConsume = function(event) {
 		});
 
 		// Also historize the Event
-		// TODO: don't store if previous value is identical
-		new schema.History(sensor).save();
+		var histo = {
+        		key: event.key,
+			zid: event.zid,
+			evttype: 'sensorevt',
+			updated: event.updated,
+			data: sensor
+		};
+		new schema.History(histo).save();
 	}
 
 	return true;
