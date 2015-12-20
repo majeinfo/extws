@@ -34,6 +34,11 @@ function checkClient(req, res, next) {
 		return;
 	}
 	
+	// Changed by JD on the 12/20/15:
+	// the test is made towards the Controller object only : Controllers are created by the Django Admin,
+	// everything is accepeted if the Controller exists
+	// Maybe the Controller has not been associated but it does not matter
+	/*
 	schema.User.findOne({ key: req.body.key }, function(err, user) {
 		if (err || !user) {
 			logger.error('checkClient: mongo error finding key:', req.body.key);
@@ -43,6 +48,15 @@ function checkClient(req, res, next) {
 		//logger.debug(user);
 		if (!user.controllers || user.controllers.indexOf(req.body.zid) == -1) {
 			logger.error('checkClient: zid', req.body.zid, ' not associated with key', req.body.key);
+			res.json({ status: 'ok' });
+			return;
+		}
+		next();
+	});
+	*/
+	schema.Controller.findOne({ key: req.body.key, zid: req.body.zid }, function(err, contr) {
+		if (err || !contr) {
+			logger.error('checkClient: mongo error finding key or zid: ' + req.body.key + '/' + req.body.zid);
 			res.json({ status: 'ok' });
 			return;
 		}
