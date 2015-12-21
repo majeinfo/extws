@@ -74,6 +74,7 @@ router.post('/events', statusOK, checkClient, function(req, res, next) {
 		evttype: req.body.evttype,
 		data: req.body.data,
 		updated: req.body.updated,
+		localip: req.body.localip,
 		key: req.body.key
 	});
 	event.save(function(err) {

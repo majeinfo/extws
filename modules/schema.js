@@ -51,6 +51,7 @@ var eventSchema = new Schema({
 	key: String,
 	zid: String,
 	evttype: String,
+	localip: { type: String, default: '' },
 	updated: { type: Date, default: Date.now },
 	data: Schema.Types.Mixed
 }, { versionKey: false });
@@ -142,6 +143,7 @@ var controllerSchema = new Schema({
 	zid: String,
 	key: String,	// owner
 	doversion: { type: String, default: '' },
+	localip: { type: String, default: '' },
 	description: { type: String, default: '' },
 	login: { type: String, default: '' },
 	timezone: { type: String, default: '' }

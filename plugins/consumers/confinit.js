@@ -7,7 +7,7 @@ var schema = require('../../modules/schema'),
 
 module.exports.doConsume = function(event) {
         logger.debug('Consume Confinit Events');
-	schema.Controller.findOneAndUpdate({ key: event.key, zid: event.zid }, { doversion: event.data.doversion }, function(err) {
+	schema.Controller.findOneAndUpdate({ key: event.key, zid: event.zid }, { doversion: event.data.doversion, localip: event.localip }, function(err) {
 		if (err) {
 			logger.error('Could not find Controller:', event.key, event.zid);
 			return;
