@@ -2,9 +2,9 @@ FROM centos:centos7
 MAINTAINER jd
 
 #VOLUME /data
-COPY .git/epel.repo /etc/yum.repos.d/
-COPY .git/node-v4.4.0-linux-x64.tar.xz /opt/
-COPY .git/RPM-GPG-KEY-EPEL-7 /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7
+COPY build/epel.repo /etc/yum.repos.d/
+COPY build/node-v4.4.0-linux-x64.tar.xz /opt/
+COPY build/RPM-GPG-KEY-EPEL-7 /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7
 ENV PATH /opt/node/bin:$PATH
 RUN yum -y update && \
     yum -y install git gcc gcc-c++ make automake && \
