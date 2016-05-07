@@ -5,7 +5,7 @@
 exports.mongoSrv = 'mongosrv';
 exports.mongoPort = 27017;
 exports.mongoDB = 'domopi';
-exports.mongoUser = '';
-exports.mongoPassword = '';
+exports.mongoUser = 'domopi';
+exports.mongoPassword = 'domopi';
 
 // EOF
