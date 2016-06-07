@@ -3,7 +3,7 @@
 // This is only a Web Service API - not HTML produced
 //
 // Set PORT environment variable to select the listening port (default: 3001)
-// Set LEVEL to select the default logging level
+// Set LEVEL to select the default logging level    
 // --------------------------------------------------------------------------
 var express = require('express'),
     path = require('path'),
