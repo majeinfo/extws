@@ -93,7 +93,8 @@ router.post('/events', statusOK, checkClient, function(req, res, next) {
 				res.json(resp);
 				return;
 			}
-			logger.debug('found commands:', cmds);
+			//logger.debug('found commands:', cmds);
+			logger.debug('found commands');
 			resp['cmds'] = new Array();
 			for (i in cmds) {
 				resp['cmds'][i] = cmds[i];
