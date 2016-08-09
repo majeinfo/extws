@@ -26,7 +26,7 @@ function _sendMail(to_addr, event) {
 		to: to_addr,
 		subject: event.data.subject,
 		text: event.data.body,
-		html: event.data.body
+		html: event.data.body.replace(/(\n)/g, '<br />')
 	}, function(error, info) {
 		if (error) {
 			logger.error('Message sent with error: ' + error);
