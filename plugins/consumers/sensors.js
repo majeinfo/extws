@@ -3,6 +3,7 @@
 // ----------------------------------------------------
 //
 var schema = require('../../modules/schema'),
+    influx = require('../../modules/influxdb'),
     logger = require('../../modules/logger');
 
 module.exports.doConsume = function(event) {
@@ -40,6 +41,8 @@ module.exports.doConsume = function(event) {
 						sensor, { upsert: true, new: true }, function(err) {
 			if (err) logger.error(err);
 		});
+
+		influx.write(sensor);
 
 		// Also historize the Event
 		var histo = {

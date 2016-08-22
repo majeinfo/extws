@@ -8,8 +8,21 @@ var fs = require('fs'),
     config = require('./config/local.js'),
     logger = require('./modules/logger.js'),
     schema = require('./modules/schema.js');
+var influx;
  
 var lock = false;
+
+// Connect to InfluxDB if needed
+if (config.use_influxdb) {
+	influx = require('influx');
+	influx_client = influx({ 
+		host: config.influxSrv, 
+		port: config.influxPort, 
+		username: config.influxUser, 
+		password: config.influxPassword, 
+		database: config.influxDB 
+	});
+}
 
 // Load the Consumer Plugins
 var _consumerPlugins = {};
@@ -49,6 +62,7 @@ function handleOneEvent()
 		if (!event.zid || !event.key || !event.data || !event.updated || !event.evttype) {
 			logger.error('Incomplete sensorevent: skipped');
 			lock = false;
+			handleOneEvent();
 			return;
 		}
 
@@ -58,19 +72,26 @@ function handleOneEvent()
                 for (var p in _consumerPlugins) {
                         if (p == event.evttype) {
                                 found = true;
-				var res = _consumerPlugins[p].doConsume(event);
+				try {
+					var res = _consumerPlugins[p].doConsume(event);
+				} catch (err) {
+					logger.error(err);
+				}
                                 break;
                         }
                 }
                 if (!found) {
                         logger.error('Event has unknown Type: ' + event.evttype);
+			lock = false;
+			handleOneEvent();
                         return;
                 }
 
 		lock = false;
+		handleOneEvent();
 	});
 }
 
-setInterval(handleOneEvent, 1000);
+setInterval(handleOneEvent, 5000);
 
 // EOF
