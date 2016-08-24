@@ -16,6 +16,7 @@
     "nodemailer": "~1.10.0",
     "nodemailer-smtp-transport": "~1.0.4",
     "serve-favicon": "~2.3.0",
-    "winston": "~2.1.0"
+    "winston": "~2.1.0",
+    "influx": "~4.2.1"
   }
 }
