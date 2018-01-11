@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------
-// PROXY INTERFACE WITH POLLER - demo
+// PROXY INTERFACE WITH POLLER - demo 
 //
 // This is only a Web Service API - not HTML produced
 //
